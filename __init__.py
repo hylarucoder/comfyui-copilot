@@ -1,119 +1,4 @@
-json_data = {
-    "3": {
-        "inputs": {
-            "seed": 979537337409677,
-            "steps": 30,
-            "cfg": 8.0,
-            "sampler_name": "ddim",
-            "scheduler": "normal",
-            "denoise": 1.0,
-            "model": ["4", 0],
-            "positive": ["6", 0],
-            "negative": ["7", 0],
-            "latent_image": ["5", 0],
-        },
-        "class_type": "KSampler",
-    },
-    "4": {
-        "inputs": {"ckpt_name": "AWPainting 1.1_v1.1.safetensors"},
-        "class_type": "CheckpointLoaderSimple",
-    },
-    "5": {
-        "inputs": {"width": 512, "height": 512, "batch_size": 1},
-        "class_type": "EmptyLatentImage",
-    },
-    "6": {
-        "inputs": {
-            "text": "masterpiece, best quality,\n1girl, solo, long hair, black hair, from behind",
-            "clip": ["4", 1],
-        },
-        "class_type": "CLIPTextEncode",
-    },
-    "7": {
-        "inputs": {
-            "text": "(worst quality, low quality:1.4), EasyNegative, ng_deepnegative_v1_75t, bad_prompt_version2,",
-            "clip": ["4", 1],
-        },
-        "class_type": "CLIPTextEncode",
-    },
-    "8": {"inputs": {"samples": ["3", 0], "vae": ["4", 2]}, "class_type": "VAEDecode"},
-    "9": {
-        "inputs": {"filename_prefix": "ComfyUI", "images": ["11", 0]},
-        "class_type": "SaveImage",
-    },
-    "11": {
-        "inputs": {
-            "int_field": 0,
-            "float_field": 1.0,
-            "print_to_screen": "enable",
-            "string_field": "Hello World!",
-            "image": ["8", 0],
-        },
-        "class_type": "EagleImageNode",
-    },
-}
-
-
-def parse_prompt_token(prompt):
-    return [_.replace("\n", "").strip() for _ in prompt.split(",")]
-
-
-def parse_KSampler(
-    class_type,
-    inputs,
-    **kwargs,
-):
-    data = kwargs.get("data")
-    for input_key, input_value in inputs.items():
-        if isinstance(input_value, (int, float)):
-            print(f"{class_type}:{input_key.capitalize()}:{input_value}")
-        if isinstance(input_value, list):
-            for v in input_value:
-                if v not in data:
-                    continue
-                if data[v]["class_type"] != "CLIPTextEncode":
-                    continue
-
-                if "positive" in input_key.lower():
-                    p = data[v]["inputs"]["text"]
-                    print(f"{class_type}:{input_key.capitalize()}:{p}")
-                    continue
-                if "negative" in input_key.lower():
-                    p = data[v]["inputs"]["text"]
-                    print(f"{class_type}:{input_key.capitalize()}:{p}")
-                    continue
-                print(f"{class_type}:{input_key.capitalize()}:{p}")
-
-
-def parse_CLIPTextEncode(class_type, inputs):
-    for input_key, input_value in inputs.items():
-        if isinstance(input_value, str):
-            if class_type == "CLIPTextEncode":
-                for line in input_value.split(","):
-                    line = line.strip()
-                    if line:
-                        print(f"{class_type}:{line}")
-            else:
-                print(f"{class_type}:{input_key}:{input_value}")
-
-
-def extract_info(data):
-    for key, value in data.items():
-        class_type = value.get("class_type")
-        inputs = value["inputs"]
-        if class_type == "KSampler":
-            parse_KSampler(class_type, inputs, data=data)
-            continue
-        # if class_type == "CLIPTextEncode":
-        #     parse_CLIPTextEncode(class_type, inputs)
-        #     continue
-        if class_type not in [
-            "CheckpointLoaderSimple",
-        ]:
-            continue
-
-
-extract_info(json_data)
+from comfyui_eagle_image.prompt_parser import parse_prompt_token
 
 
 class EagleImageNode:
@@ -191,7 +76,7 @@ class EagleImageNode:
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
 
-    RETURN_TYPES = ("IMAGE",)
+    RETURN_TYPES = ()
     # RETURN_NAMES = ("image_output_name",)
 
     FUNCTION = "do_saving"
@@ -220,8 +105,8 @@ class EagleImageNode:
             """
             )
         # do some processing on the image, in this example I just invert it
-        image = image
-        return (image,)
+        a = parse_prompt_token(prompt)
+        print(a)
 
 
 # A dictionary that contains all nodes you want to export with their names
