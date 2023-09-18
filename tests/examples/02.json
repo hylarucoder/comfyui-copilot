@@ -1,0 +1,135 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 804645408561758,
+      "steps": 40,
+      "cfg": 1.5,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": ["47", 0],
+      "positive": ["32", 0],
+      "negative": ["33", 0],
+      "latent_image": ["5", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "agelesnate_v121.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "5": {
+    "inputs": {
+      "width": 768,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage"
+  },
+  "8": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["34", 0]
+    },
+    "class_type": "VAEDecode"
+  },
+  "17": {
+    "inputs": {
+      "seed": 804645408561758,
+      "steps": 20,
+      "cfg": 7,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "model": ["47", 0],
+      "positive": ["32", 0],
+      "negative": ["33", 0],
+      "latent_image": ["25", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "21": {
+    "inputs": {
+      "samples": ["17", 0],
+      "vae": ["34", 0]
+    },
+    "class_type": "VAEDecode"
+  },
+  "24": {
+    "inputs": {
+      "upscale_model": ["26", 0],
+      "image": ["8", 0]
+    },
+    "class_type": "ImageUpscaleWithModel"
+  },
+  "25": {
+    "inputs": {
+      "pixels": ["27", 0],
+      "vae": ["34", 0]
+    },
+    "class_type": "VAEEncode"
+  },
+  "26": {
+    "inputs": {
+      "model_name": "RealESRGAN_x4plus_anime_6B.pth"
+    },
+    "class_type": "UpscaleModelLoader"
+  },
+  "27": {
+    "inputs": {
+      "upscale_method": "area",
+      "scale_by": 0.5,
+      "image": ["24", 0]
+    },
+    "class_type": "ImageScaleBy"
+  },
+  "32": {
+    "inputs": {
+      "text": "1girl, solo, expressionless, silver hair, ponytail, purple eyes, face mask, ninja, blue bikini, medium breats, cleavage, scarf,",
+      "clip": ["47", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "33": {
+    "inputs": {
+      "text": "embeddings:EasyNegative, (worst quality, low quality, normal quality, bad anatomy:1.4), text, watermark,",
+      "clip": ["47", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "34": {
+    "inputs": {
+      "vae_name": "vae-ft-mse-840000-ema-pruned.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "47": {
+    "inputs": {
+      "lora_name": "oc_v10.safetensors",
+      "strength_model": 0.5,
+      "strength_clip": 0.5,
+      "model": ["4", 0],
+      "clip": ["4", 1]
+    },
+    "class_type": "LoraLoader"
+  },
+  "71": {
+    "inputs": {
+      "images": ["21", 0]
+    },
+    "class_type": "PreviewImage"
+  },
+  "91": {
+    "inputs": {
+      "lossless_webp": "lossy",
+      "compression": 80,
+      "positive_prompt": "1girl, solo, expressionless, silver hair, ponytail, purple eyes, face mask, ninja, blue bikini, medium breats, cleavage, scarf,",
+      "negative_prompt": "embeddings:EasyNegative, (worst quality, low quality, normal quality, bad anatomy:1.4), text, watermark,",
+      "annotation": "",
+      "images": ["21", 0]
+    },
+    "class_type": "Send Webp Image to Eagle"
+  }
+}

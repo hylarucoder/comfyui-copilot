@@ -1,0 +1,124 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 234288240797552,
+      "steps": 40,
+      "cfg": 8,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": ["4", 0],
+      "positive": ["32", 0],
+      "negative": ["33", 0],
+      "latent_image": ["5", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "sdXL_v10VAEFix.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "5": {
+    "inputs": {
+      "width": 832,
+      "height": 1216,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage"
+  },
+  "8": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["34", 0]
+    },
+    "class_type": "VAEDecode"
+  },
+  "12": {
+    "inputs": {
+      "ascore": 6,
+      "width": 2048,
+      "height": 2048,
+      "text": "photo of beautiful age 18 girl, pastel hair, freckles sexy, beautiful, close up, young, dslr, 8k, 4k, ultrarealistic, realistic, natural skin, textured skin",
+      "clip": ["30", 1]
+    },
+    "class_type": "CLIPTextEncodeSDXLRefiner"
+  },
+  "16": {
+    "inputs": {
+      "ascore": 6,
+      "width": 2048,
+      "height": 2048,
+      "text": "prompt: text, watermark, low quality, medium quality, blurry, censored, wrinkles, deformed, mutated text, watermark, low quality, medium quality, blurry, censored, wrinkles, deformed, mutated",
+      "clip": ["30", 1]
+    },
+    "class_type": "CLIPTextEncodeSDXLRefiner"
+  },
+  "17": {
+    "inputs": {
+      "seed": 0,
+      "steps": 20,
+      "cfg": 8,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 0.3000000000000001,
+      "model": ["30", 0],
+      "positive": ["12", 0],
+      "negative": ["16", 0],
+      "latent_image": ["3", 0]
+    },
+    "class_type": "KSampler"
+  },
+  "21": {
+    "inputs": {
+      "samples": ["17", 0],
+      "vae": ["34", 0]
+    },
+    "class_type": "VAEDecode"
+  },
+  "28": {
+    "inputs": {
+      "filename_prefix": "xl_output",
+      "images": ["8", 0]
+    },
+    "class_type": "SaveImage"
+  },
+  "30": {
+    "inputs": {
+      "ckpt_name": "sd_xl_refiner_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple"
+  },
+  "32": {
+    "inputs": {
+      "text": "photo of beautiful age 18 girl, pastel hair, freckles sexy, beautiful, close up, young, dslr, 8k, 4k, ultrarealistic, realistic, natural skin, textured skin",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "33": {
+    "inputs": {
+      "text": "prompt: text, watermark, low quality, medium quality, blurry, censored, wrinkles, deformed, mutated text, watermark, low quality, medium quality, blurry, censored, wrinkles, deformed, mutated",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "34": {
+    "inputs": {
+      "vae_name": "sdxl_vae.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "35": {
+    "inputs": {
+      "lossless_webp": "lossy",
+      "compression": 80,
+      "positive_prompt": "",
+      "negative_prompt": "",
+      "annotation": "",
+      "images": ["21", 0]
+    },
+    "class_type": "Send Webp Image to Eagle"
+  }
+}
