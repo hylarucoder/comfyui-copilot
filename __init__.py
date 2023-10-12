@@ -1,7 +1,17 @@
-from comfyui_eagle_image.prompt_parser import parse_prompt_token
+from .sdxl_prompt_styler import SDXLPromptStyler, SDXLPromptStylerAdvanced
+from .prompt_parser import parse_workflow
+import typing as t
 
 
-class EagleImageNode:
+class BaseNode:
+    CATEGORY = "copilot"
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        pass
+
+
+class EagleImageNode(BaseNode):
     """
     A example node
 
@@ -68,7 +78,8 @@ class EagleImageNode:
                 "string_field": (
                     "STRING",
                     {
-                        "multiline": False,  # True if you want the field to look like the one on the ClipTextEncode node
+                        "multiline": False,
+                        # True if you want the field to look like the one on the ClipTextEncode node
                         "default": "Hello World!",
                     },
                 ),
@@ -81,19 +92,15 @@ class EagleImageNode:
 
     FUNCTION = "do_saving"
 
-    # OUTPUT_NODE = False
-
-    CATEGORY = "Example"
-
     def do_saving(
-        self,
-        image,
-        string_field,
-        int_field,
-        float_field,
-        print_to_screen,
-        prompt=None,
-        extra_pnginfo=None,
+            self,
+            image,
+            string_field,
+            int_field,
+            float_field,
+            print_to_screen,
+            prompt=None,
+            extra_pnginfo=None,
     ):
         print("--->imgae", "prompt", prompt, "extra", extra_pnginfo)
         if print_to_screen == "enable":
@@ -105,13 +112,81 @@ class EagleImageNode:
             """
             )
         # do some processing on the image, in this example I just invert it
-        a = parse_prompt_token(prompt)
+        a = parse_workflow(prompt)
         print(a)
+
+
+TResolution = t.Literal[
+    "Square (1024x1024)",
+    "Cinematic (1536x640)",
+    "Cinematic (640x1536)",
+    "Widescreen (1344x768)",
+    "Widescreen (768x1344)",
+    "Photo (1216x832)",
+    "Photo (832x1216)",
+    "Portrait (1152x896)",
+]
+
+
+class SDXLResolutionPresets(BaseNode):
+    RESOLUTIONS: list[TResolution] = [
+        "Square (1024x1024)",
+        "Cinematic (1536x640)",
+        "Cinematic (640x1536)",
+        "Widescreen (1344x768)",
+        "Widescreen (768x1344)",
+        "Photo (1216x832)",
+        "Photo (832x1216)",
+        "Portrait (1152x896)",
+    ]
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "resolution": (cls.RESOLUTIONS, {"default": "Square (1024x1024)"}),
+            },
+        }
+
+    RETURN_TYPES = ("INT", "INT",)
+    RETURN_NAMES = ("width", "height",)
+    FUNCTION = "get_value"
+
+    def get_value(self, resolution: TResolution, ) -> tuple[int, int]:
+        if resolution == "Cinematic (1536x640)":
+            return 1536, 640
+        if resolution == "Cinematic (640x1536)":
+            return 640, 1536
+        if resolution == "Widescreen (1344x768)":
+            return 1344, 768
+        if resolution == "Widescreen (768x1344)":
+            return 768, 1344
+        if resolution == "Photo (1216x832)":
+            return 1216, 832
+        if resolution == "Photo (832x1216)":
+            return 832, 1216
+        if resolution == "Portrait (1152x896)":
+            return 1152, 896
+        if resolution == "Portrait (896x1152)":
+            return 896, 1152
+        if resolution == "Square (1024x1024)":
+            return 1024, 1024
 
 
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
-NODE_CLASS_MAPPINGS = {"EagleImageNode": EagleImageNode}
+NODE_CLASS_MAPPINGS = {
+    "EagleImageNode": EagleImageNode,
+    "SDXLResolutionPresets": SDXLResolutionPresets,
+    "SDXLPromptStyler": SDXLPromptStyler,
+    "SDXLPromptStylerAdvanced": SDXLPromptStylerAdvanced,
+
+}
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
-NODE_DISPLAY_NAME_MAPPINGS = {"EagleImageNode": "Eagle Image Node for PNGInfo"}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "EagleImageNode": "Eagle Image Node for PNGInfo",
+    "SDXLResolutionPresets": "SDXL Resolution Presets (ws)",
+    "SDXLPromptStyler": "SDXL Prompt Styler",
+    "SDXLPromptStylerAdvanced": "SDXL Prompt Styler Advanced",
+}
