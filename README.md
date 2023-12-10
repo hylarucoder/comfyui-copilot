@@ -1,5 +1,10 @@
-# ComfyUI-Eagle-PNGInfo
+# ComfyUI-Copilot
 
-A ComfyUI version of pnginfo
+Self-used nodes
 
-https://github.com/bbc-mc/sdweb-eagle-pnginfo
+# Credits
+
+Code mostly adapted from below
+
+- https://github.com/bbc-mc/sdweb-eagle-pnginfo
+- https://github.com/twri/sdxl_prompt_styler
